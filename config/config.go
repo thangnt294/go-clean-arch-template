@@ -3,7 +3,9 @@ package config
 import "github.com/spf13/viper"
 
 type Config struct {
-	JWTKey string
+	JWTKey   string
+	DBUrl    string
+	DBDriver string
 }
 
 func LoadConfig() *Config {
@@ -11,6 +13,8 @@ func LoadConfig() *Config {
 	viper.ReadInConfig()
 
 	return &Config{
-		JWTKey: viper.GetString("JWTKEY"),
+		JWTKey:   viper.GetString("JWTKEY"),
+		DBUrl:    viper.GetString("DB_URL"),
+		DBDriver: viper.GetString("DB_DRIVER"),
 	}
 }

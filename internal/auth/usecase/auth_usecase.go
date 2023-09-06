@@ -31,9 +31,8 @@ func (u *authUsecase) Login(ctx context.Context, user domain.User) (string, erro
 	// TODO: add expire time
 	token := jwt.NewWithClaims(jwt.SigningMethodES256,
 		jwt.MapClaims{
-			"username": existingUser.Name,
-			"email":    existingUser.Email,
-			"role":     existingUser.Role,
+			"name":  existingUser.Name,
+			"email": existingUser.Email,
 		})
 
 	return token.SignedString(config.LoadConfig().JWTKey)

@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: go_template_mysql
+    command: mysqld --user=root
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: go_template
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+  db-migrate:
+    image: migrate/migrate:v4.15.2
+    container_name: go_template_db_migrate
+    environment:
+      MYSQL_URL: mysql://@mysql:3306/go_template?sslmode=disable
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password

@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS user (
+    id INT NOT NULL PRIMARY KEY,
+    created_at TIME NOT NULL DEFAULT NOW(),
+
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+);
