@@ -51,9 +51,33 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
-	// TODO: implement
+	var user domain.User
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		fmt.Println(err) // TODO: add logging
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	err = h.AuthUsecase.Signup(context.Background(), user)
+	if err != nil {
+		fmt.Println(err) // TODO: add logging
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
 }
 
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
-	// TODO: implement
+	cookie := http.Cookie{
+		Name:     "token",
+		Value:    "",
+		Domain:   "localhost",
+		Path:     "/",
+		MaxAge:   -1,
+		HttpOnly: true,
+	}
+	http.SetCookie(w, &cookie)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
 }

@@ -40,8 +40,12 @@ func (u *authUsecase) Login(ctx context.Context, user domain.User) (string, erro
 }
 
 func (u *authUsecase) Signup(ctx context.Context, user domain.User) error {
-	// TODO: implement
-	return nil
+	hashPw, err := util.GenerateHashPassword(user.Password)
+	if err != nil {
+		return err
+	}
+	user.Password = hashPw
+	return u.authRepo.Create(ctx, user)
 }
 
 func (u *authUsecase) Logout(ctx context.Context, user domain.User) error {
