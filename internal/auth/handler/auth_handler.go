@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"go-template/internal/domain"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-playground/validator/v10"
 )
 
 type AuthHandler struct {
@@ -18,9 +20,11 @@ func NewAuthHandler(r chi.Router, us domain.AuthUsecase) {
 	handler := &AuthHandler{
 		AuthUsecase: us,
 	}
-	r.Post("/login", handler.Login)
-	r.Post("/signup", handler.Signup)
-	r.Post("/logout", handler.Logout)
+	r.Route("/auth", func(r chi.Router) {
+		r.Post("/login", handler.Login)
+		r.Post("/signup", handler.Signup)
+		r.Post("/logout", handler.Logout)
+	})
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
@@ -29,20 +33,23 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err) // TODO: add logging
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	token, err := h.AuthUsecase.Login(context.Background(), user)
 	if err != nil {
 		fmt.Println(err) // TODO: add logging
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
+	expirationTime := time.Now().Add(1 * time.Hour)
 	cookie := http.Cookie{
 		Name:     "token",
 		Value:    token,
 		Domain:   "localhost",
 		Path:     "/",
-		MaxAge:   60 * 60, // TODO: set this to expiration date
+		Expires:  expirationTime,
 		HttpOnly: true,
 	}
 	http.SetCookie(w, &cookie)
@@ -56,12 +63,23 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err) // TODO: add logging
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// TODO: better way to validate
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err = validate.Struct(user)
+	if err != nil {
+		fmt.Println(err) // TODO: add logging
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	err = h.AuthUsecase.Signup(context.Background(), user)
 	if err != nil {
 		fmt.Println(err) // TODO: add logging
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)

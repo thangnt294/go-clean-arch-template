@@ -6,6 +6,7 @@ import (
 	"go-template/config"
 	"go-template/internal/auth/util"
 	"go-template/internal/domain"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -31,8 +32,9 @@ func (u *authUsecase) Login(ctx context.Context, user domain.User) (string, erro
 	// TODO: add expire time
 	token := jwt.NewWithClaims(jwt.SigningMethodES256,
 		jwt.MapClaims{
-			"name":  existingUser.Name,
-			"email": existingUser.Email,
+			"name":    existingUser.Name,
+			"email":   existingUser.Email,
+			"expired": time.Now().Add(time.Hour * 1).Unix(),
 		})
 
 	return token.SignedString(config.LoadConfig().JWTKey)

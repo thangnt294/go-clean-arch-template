@@ -1,8 +1,8 @@
 version: "3.7"
 services:
-  mysql:
-    image: mysql:5.7
-    container_name: go_template_mysql
+  db:
+    image: mysql
+    container_name: go_template_db
     command: mysqld --user=root
     ports:
       - 3306:3306
@@ -15,10 +15,18 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 5s
       retries: 10
-  db-migrate:
-    image: migrate/migrate:v4.15.2
+    networks:
+      - template
+  migrate:
+    image: migrate/migrate
     container_name: go_template_db_migrate
     environment:
-      MYSQL_URL: mysql://@mysql:3306/go_template?sslmode=disable
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      DB_URL: mysql://user:password@tcp(db:3306)/go_template
+    volumes:
+      - ./migrations:/migrations
+    networks:
+      - template
+    depends_on:
+      - db
+networks:
+  template:
