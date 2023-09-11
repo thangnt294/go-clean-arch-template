@@ -25,19 +25,19 @@ func (u *authUsecase) Login(ctx context.Context, user domain.User) (string, erro
 		return "", err
 	}
 
-	if !util.CompareHashPassword(existingUser.Password, user.Password) {
+	if !util.CompareHashPassword(user.Password, existingUser.Password) {
 		return "", errors.New("Invalid password")
 	}
 
 	// TODO: add expire time
-	token := jwt.NewWithClaims(jwt.SigningMethodES256,
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"name":    existingUser.Name,
 			"email":   existingUser.Email,
 			"expired": time.Now().Add(time.Hour * 1).Unix(),
 		})
 
-	return token.SignedString(config.LoadConfig().JWTKey)
+	return token.SignedString([]byte(config.LoadConfig().JWTKey))
 }
 
 func (u *authUsecase) Signup(ctx context.Context, user domain.User) error {

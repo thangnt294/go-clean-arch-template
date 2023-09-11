@@ -21,3 +21,5 @@ dev:
 
 sleep:
 	sleep 5
+
+.PHONY: install-tools migrate migrate-create teardown init db dev sleep
