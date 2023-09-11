@@ -3,8 +3,8 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"go-template/internal/domain"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -14,11 +14,13 @@ import (
 
 type AuthHandler struct {
 	AuthUsecase domain.AuthUsecase
+	Logger      *slog.Logger
 }
 
-func NewAuthHandler(r chi.Router, us domain.AuthUsecase) {
+func NewAuthHandler(r chi.Router, us domain.AuthUsecase, logger *slog.Logger) {
 	handler := &AuthHandler{
 		AuthUsecase: us,
+		Logger:      logger,
 	}
 	r.Route("/auth", func(r chi.Router) {
 		r.Post("/login", handler.Login)
@@ -31,14 +33,14 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var user domain.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		fmt.Println(err) // TODO: add logging
+		h.Logger.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	token, err := h.AuthUsecase.Login(context.Background(), user)
 	if err != nil {
-		fmt.Println(err) // TODO: add logging
+		h.Logger.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -61,7 +63,7 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	var user domain.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		fmt.Println(err) // TODO: add logging
+		h.Logger.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -70,14 +72,14 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 	err = validate.Struct(user)
 	if err != nil {
-		fmt.Println(err) // TODO: add logging
+		h.Logger.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = h.AuthUsecase.Signup(context.Background(), user)
 	if err != nil {
-		fmt.Println(err) // TODO: add logging
+		h.Logger.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

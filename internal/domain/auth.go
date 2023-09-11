@@ -17,5 +17,4 @@ type AuthRepository interface {
 type AuthUsecase interface {
 	Login(ctx context.Context, user User) (string, error)
 	Signup(ctx context.Context, user User) error
-	Logout(ctx context.Context, user User) error
 }

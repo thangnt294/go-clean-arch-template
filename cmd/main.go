@@ -2,7 +2,9 @@ package main
 
 import (
 	"go-template/config"
+	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -20,10 +22,13 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
+	// Logger
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
 	// register handlers
 	authRepo := authRepo.NewAuthRepo(db)
 	authUsecase := authUsecase.NewAuthUsecase(authRepo)
-	authHandler.NewAuthHandler(r, authUsecase)
+	authHandler.NewAuthHandler(r, authUsecase, logger)
 
 	http.ListenAndServe(":3000", r)
 }
