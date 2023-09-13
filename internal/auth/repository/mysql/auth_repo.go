@@ -18,7 +18,7 @@ func NewAuthRepo(db *sqlx.DB) domain.AuthRepository {
 // GetByEmail implements domain.AuthRepository.
 func (r *authRepo) GetByEmail(ctx context.Context, email string) (domain.User, error) {
 	var user domain.User
-	err := r.DB.Get(&user, "SELECT * FROM user WHERE email = ? LIMIT 1", email)
+	err := r.DB.GetContext(ctx, &user, "SELECT * FROM user WHERE email = ? LIMIT 1", email)
 	return user, err
 }
 

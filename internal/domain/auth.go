@@ -4,9 +4,14 @@ import "context"
 
 type User struct {
 	AutoIncr
-	Name     string `json:"name"`
-	Email    string `json:"email" validate:"email,required"`
-	Password string `json:"password" validate:"required"`
+	Name     string `json:"name" validate:"required"`
+	Email    string `json:"email" validate:"email,required,min=6"`
+	Password string `json:"password" validate:"required,min=6"`
+}
+
+type UserLogin struct {
+	Email    string `json:"email" validate:"email,required,min=6"`
+	Password string `json:"password" validate:"required,min=6"`
 }
 
 type AuthRepository interface {
@@ -15,6 +20,6 @@ type AuthRepository interface {
 }
 
 type AuthUsecase interface {
-	Login(ctx context.Context, user User) (string, error)
+	Login(ctx context.Context, user UserLogin) (string, error)
 	Signup(ctx context.Context, user User) error
 }

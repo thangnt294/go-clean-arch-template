@@ -20,6 +20,6 @@ dev:
 	air
 
 sleep:
-	sleep 5
+	sleep 10
 
 .PHONY: install-tools migrate migrate-create teardown init db dev sleep

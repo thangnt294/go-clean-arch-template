@@ -19,7 +19,7 @@ func NewAuthUsecase(authRepo domain.AuthRepository) domain.AuthUsecase {
 	return &authUsecase{authRepo}
 }
 
-func (u *authUsecase) Login(ctx context.Context, user domain.User) (string, error) {
+func (u *authUsecase) Login(ctx context.Context, user domain.UserLogin) (string, error) {
 	existingUser, err := u.authRepo.GetByEmail(ctx, user.Email)
 	if err != nil {
 		return "", err

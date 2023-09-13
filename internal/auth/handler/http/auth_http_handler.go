@@ -1,8 +1,9 @@
-package handler
+package http
 
 import (
 	"context"
 	"encoding/json"
+	"go-template/internal/auth/errors"
 	"go-template/internal/domain"
 	"log/slog"
 	"net/http"
@@ -30,18 +31,28 @@ func NewAuthHandler(r chi.Router, us domain.AuthUsecase, logger *slog.Logger) {
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	var user domain.User
+	var user domain.UserLogin
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		h.Logger.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, errors.ErrDecodeRequestBody, http.StatusBadRequest)
 		return
 	}
 
-	token, err := h.AuthUsecase.Login(context.Background(), user)
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err = validate.Struct(user)
 	if err != nil {
 		h.Logger.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, errors.ErrValidateRequestBody, http.StatusBadRequest)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+	token, err := h.AuthUsecase.Login(ctx, user)
+	if err != nil {
+		h.Logger.Error(err.Error())
+		http.Error(w, errors.ErrInternalError, http.StatusInternalServerError)
 		return
 	}
 
@@ -64,23 +75,24 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		h.Logger.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, errors.ErrDecodeRequestBody, http.StatusBadRequest)
 		return
 	}
 
-	// TODO: better way to validate
 	validate := validator.New(validator.WithRequiredStructEnabled())
 	err = validate.Struct(user)
 	if err != nil {
 		h.Logger.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, errors.ErrValidateRequestBody, http.StatusBadRequest)
 		return
 	}
 
-	err = h.AuthUsecase.Signup(context.Background(), user)
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+	err = h.AuthUsecase.Signup(ctx, user)
 	if err != nil {
 		h.Logger.Error(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, errors.ErrInternalError, http.StatusInternalServerError)
 		return
 	}
 

@@ -11,7 +11,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 
-	authHandler "go-template/internal/auth/handler"
+	authHandler "go-template/internal/auth/handler/http"
 	authRepo "go-template/internal/auth/repository/mysql"
 	authUsecase "go-template/internal/auth/usecase"
 )
