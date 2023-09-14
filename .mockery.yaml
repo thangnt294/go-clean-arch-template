@@ -1,0 +1,8 @@
+with-expecter: true
+mockname: "{{.InterfaceName}}"
+filename: "{{.MockName}}.go"
+dir: "internal/domain/mocks"
+packages:
+  go-template/internal/domain:
+    config:
+      all: True

@@ -3,11 +3,12 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"go-template/internal/auth/errors"
-	"go-template/internal/domain"
 	"log/slog"
 	"net/http"
 	"time"
+
+	"go-template/internal/auth/errors"
+	"go-template/internal/domain"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"

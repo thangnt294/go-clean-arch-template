@@ -8,6 +8,9 @@ migrate:
 migrate-create:
 	docker-compose run --rm migrate create -ext sql -dir /migrations $(MIGRATE_NAME)
 
+gen-mocks:
+	docker-compose run -w /src mockery --all
+
 teardown:
 	docker-compose down -v
 
@@ -22,4 +25,4 @@ dev:
 sleep:
 	sleep 10
 
-.PHONY: install-tools migrate migrate-create teardown init db dev sleep
+.PHONY: install-tools migrate migrate-create gen-mocks teardown init db dev sleep

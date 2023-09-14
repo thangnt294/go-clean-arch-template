@@ -1,10 +1,11 @@
 package main
 
 import (
-	"go-template/config"
 	"log/slog"
 	"net/http"
 	"os"
+
+	"go-template/config"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -17,8 +18,8 @@ import (
 )
 
 func main() {
-	cfg := config.LoadConfig()
-	db := sqlx.MustConnect(cfg.DBDriver, cfg.DBUrl)
+	config.LoadConfig()
+	db := sqlx.MustConnect(config.C.DBDriver, config.C.DBUrl)
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 

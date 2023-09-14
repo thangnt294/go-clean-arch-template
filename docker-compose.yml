@@ -26,5 +26,12 @@ services:
       - template
     depends_on:
       - db
+  mockery:
+    image: vektra/mockery
+    container_name: go_template_mockery
+    volumes:
+      - .:/src
+    networks:
+      - template
 networks:
   template:

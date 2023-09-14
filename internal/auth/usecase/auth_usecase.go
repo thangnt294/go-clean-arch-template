@@ -3,10 +3,11 @@ package usecase
 import (
 	"context"
 	"errors"
+	"time"
+
 	"go-template/config"
 	"go-template/internal/auth/util"
 	"go-template/internal/domain"
-	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -36,7 +37,7 @@ func (u *authUsecase) Login(ctx context.Context, user domain.UserLogin) (string,
 			"expired": time.Now().Add(time.Hour * 1).Unix(),
 		})
 
-	return token.SignedString([]byte(config.LoadConfig().JWTKey))
+	return token.SignedString([]byte(config.C.JWTKey))
 }
 
 func (u *authUsecase) Signup(ctx context.Context, user domain.User) error {

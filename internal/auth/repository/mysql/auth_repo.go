@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"context"
+
 	"go-template/internal/domain"
 
 	"github.com/jmoiron/sqlx"

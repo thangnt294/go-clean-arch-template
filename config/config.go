@@ -1,20 +1,26 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"fmt"
+	"os"
+
+	"github.com/spf13/viper"
+)
 
 type Config struct {
-	JWTKey   string
-	DBUrl    string
-	DBDriver string
+	JWTKey   string `mapstructure:"JTWKEY"`
+	DBUrl    string `mapstructure:"DB_URL"`
+	DBDriver string `mapstructure:"DB_DRIVER"`
 }
 
-func LoadConfig() *Config {
+var C Config
+
+func LoadConfig() {
 	viper.SetConfigFile(".env")
 	viper.ReadInConfig()
 
-	return &Config{
-		JWTKey:   viper.GetString("JWTKEY"),
-		DBUrl:    viper.GetString("DB_URL"),
-		DBDriver: viper.GetString("DB_DRIVER"),
+	if err := viper.Unmarshal(&C); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
