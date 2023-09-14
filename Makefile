@@ -14,7 +14,7 @@ gen-mocks:
 teardown:
 	docker-compose down -v
 
-init: db sleep migrate
+init: db gen-mocks sleep migrate
 
 db:
 	docker-compose up -d db
