@@ -1,4 +1,4 @@
-package errors
+package domain
 
 var (
 	ErrDecodeRequestBody   = "Error decode request body"

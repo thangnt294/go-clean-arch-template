@@ -19,10 +19,13 @@ init: db gen-mocks sleep migrate
 db:
 	docker-compose up -d db
 
-dev:
-	air
-
 sleep:
 	sleep 10
 
-.PHONY: install-tools migrate migrate-create gen-mocks teardown init db dev sleep
+dev:
+	air
+
+test:
+	go test -cover ./...
+
+.PHONY: install-tools migrate migrate-create gen-mocks teardown init db dev sleep test

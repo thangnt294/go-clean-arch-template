@@ -15,8 +15,8 @@ type Config struct {
 
 var C Config
 
-func LoadConfig() {
-	viper.SetConfigFile(".env")
+func LoadConfig(filePath string) {
+	viper.SetConfigFile(filePath)
 	viper.ReadInConfig()
 
 	if err := viper.Unmarshal(&C); err != nil {

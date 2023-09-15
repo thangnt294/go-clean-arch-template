@@ -27,7 +27,7 @@ func (u *authUsecase) Login(ctx context.Context, user domain.UserLogin) (string,
 	}
 
 	if !util.CompareHashPassword(user.Password, existingUser.Password) {
-		return "", errors.New("Invalid password")
+		return "", errors.New("invalid password")
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,

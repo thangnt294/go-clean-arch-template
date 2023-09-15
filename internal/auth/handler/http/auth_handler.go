@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"time"
 
-	"go-template/internal/auth/errors"
 	"go-template/internal/domain"
 
 	"github.com/go-chi/chi/v5"
@@ -36,7 +35,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		h.Logger.Error(err.Error())
-		http.Error(w, errors.ErrDecodeRequestBody, http.StatusBadRequest)
+		http.Error(w, domain.ErrDecodeRequestBody, http.StatusBadRequest)
 		return
 	}
 
@@ -44,7 +43,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	err = validate.Struct(user)
 	if err != nil {
 		h.Logger.Error(err.Error())
-		http.Error(w, errors.ErrValidateRequestBody, http.StatusBadRequest)
+		http.Error(w, domain.ErrValidateRequestBody, http.StatusBadRequest)
 		return
 	}
 
@@ -53,7 +52,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	token, err := h.AuthUsecase.Login(ctx, user)
 	if err != nil {
 		h.Logger.Error(err.Error())
-		http.Error(w, errors.ErrInternalError, http.StatusInternalServerError)
+		http.Error(w, domain.ErrInternalError, http.StatusInternalServerError)
 		return
 	}
 
@@ -76,7 +75,7 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		h.Logger.Error(err.Error())
-		http.Error(w, errors.ErrDecodeRequestBody, http.StatusBadRequest)
+		http.Error(w, domain.ErrDecodeRequestBody, http.StatusBadRequest)
 		return
 	}
 
@@ -84,7 +83,7 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	err = validate.Struct(user)
 	if err != nil {
 		h.Logger.Error(err.Error())
-		http.Error(w, errors.ErrValidateRequestBody, http.StatusBadRequest)
+		http.Error(w, domain.ErrValidateRequestBody, http.StatusBadRequest)
 		return
 	}
 
@@ -93,7 +92,7 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	err = h.AuthUsecase.Signup(ctx, user)
 	if err != nil {
 		h.Logger.Error(err.Error())
-		http.Error(w, errors.ErrInternalError, http.StatusInternalServerError)
+		http.Error(w, domain.ErrInternalError, http.StatusInternalServerError)
 		return
 	}
 

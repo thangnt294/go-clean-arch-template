@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	config.LoadConfig()
+	config.LoadConfig(".env")
 	db := sqlx.MustConnect(config.C.DBDriver, config.C.DBUrl)
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
